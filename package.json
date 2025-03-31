@@ -12,12 +12,14 @@
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "prettier": "3.5.3",
+    "prisma": "^6.5.0",
     "typescript-eslint": "^8.28.0"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "helmet": "^8.1.0",
@@ -26,6 +28,9 @@
     "pino-pretty": "^13.0.0"
   },
   "scripts": {
-    "dev": "NODE_ENV=development bun --watch run src/server.ts | pino-pretty"
+    "dev": "NODE_ENV=development bun --watch run src/server.ts | pino-pretty",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
   }
 }
