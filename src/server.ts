@@ -3,7 +3,8 @@ import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import { PORT } from '@/config/env.config'
-import { logger } from './config/logger.config'
+import { logger } from '@/config/logger.config'
+import { AuthController } from '@/modules/auth/'
 
 const app = express()
 
@@ -23,9 +24,13 @@ app
   .use(express.json())
 
 // Routes
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app
+  // Index
+  .get('/', (req, res) => {
+    res.send('Hello World!')
+  })
+  // Auth
+  .use('/auth', new AuthController().router)
 
 // After request middlewares
 

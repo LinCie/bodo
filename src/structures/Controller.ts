@@ -4,8 +4,7 @@ import type { Request, Response, NextFunction } from 'express'
 interface RouteDefinition {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch'
   path: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handler: (req: Request, res: Response, next?: NextFunction) => any
+  handler: (req: Request, res: Response, next?: NextFunction) => void
 }
 
 abstract class Controller {
