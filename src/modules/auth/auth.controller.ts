@@ -10,7 +10,10 @@ class AuthController extends Controller {
     super()
     this.authService = new AuthService()
 
-    this.bindRoutes([{ method: 'post', path: '/signup', handler: this.signup }])
+    this.bindRoutes([
+      { method: 'post', path: '/signup', handler: this.signup },
+      { method: 'post', path: '/signin', handler: this.signin },
+    ])
   }
 
   async signup(req: Request, res: Response) {
@@ -20,9 +23,37 @@ class AuthController extends Controller {
       return res.send(validated.error.errors)
     }
 
-    const user = await this.authService.signup(validated.data)
+    const session = await this.authService.signup(validated.data)
+    this.authService.setSessionTokenCookie(
+      res,
+      session,
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+    )
 
-    return res.send(user)
+    res.status(201)
+    res.send()
+  }
+
+  async signin(req: Request, res: Response) {
+    const validated = userSchema.safeParse(req.body)
+    if (!validated.success) {
+      res.status(400)
+      return res.send(validated.error.errors)
+    }
+
+    const session = await this.authService.signin(validated.data)
+    if (session) {
+      this.authService.setSessionTokenCookie(
+        res,
+        session,
+        new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+      )
+      res.status(201)
+      return res.send()
+    }
+
+    res.status(404)
+    res.send()
   }
 }
 

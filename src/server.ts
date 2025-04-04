@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import { PORT } from '@/config/env.config'
 import { logger } from '@/config/logger.config'
 import { AuthController } from '@/modules/auth/'
@@ -21,6 +22,7 @@ app
   )
   .use(helmet())
   .use(cors())
+  .use(cookieParser())
   .use(express.json())
 
 // Routes
