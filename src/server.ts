@@ -3,7 +3,6 @@ import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import { PORT } from '@/config/env.config'
 import { logger } from '@/config/logger.config'
 import { AuthController } from '@/modules/auth/'
 
@@ -36,6 +35,4 @@ app
 
 // After request middlewares
 
-app.listen(PORT, () => {
-  logger.info(`Server is listening to port ${PORT} 🦊`)
-})
+export { app }
