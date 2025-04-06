@@ -98,7 +98,7 @@ class AuthService extends Service {
     session: Session,
     expiresAt: Date
   ): void {
-    response.cookie('cookie', session, {
+    response.cookie('session', session, {
       httpOnly: true,
       sameSite: 'lax',
       expires: expiresAt,
@@ -108,7 +108,7 @@ class AuthService extends Service {
   }
 
   deleteSessionTokenCookie(response: Response): void {
-    response.cookie('cookie', '', {
+    response.cookie('session', '', {
       httpOnly: true,
       sameSite: 'lax',
       maxAge: 0,
