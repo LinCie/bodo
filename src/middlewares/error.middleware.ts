@@ -27,6 +27,14 @@ function errorMiddleware(
       res.status(400).send({ message: err.message })
       break
 
+    case 'UnauthorizedError':
+      res.status(401).send({ message: err.message })
+      break
+
+    case 'ForbiddenError':
+      res.status(403).send({ message: err.message })
+      break
+
     case 'UniqueConstraintError':
       res.status(409).send({ message: err.message })
       break

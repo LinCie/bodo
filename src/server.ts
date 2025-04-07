@@ -3,8 +3,10 @@ import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import { FRONTEND_URL } from '@/config/env.config'
 import { logger } from '@/config/logger.config'
 import { errorMiddleware } from '@/middlewares/error.middleware'
+import { sessionMiddleware } from '@/middlewares/session.middleware'
 import { AuthController } from '@/modules/auth/'
 
 const app = express()
@@ -21,11 +23,11 @@ app
     })
   )
   .use(helmet())
-  .use(cors())
+  .use(cors({ origin: FRONTEND_URL, credentials: true }))
   .use(cookieParser())
   .use(express.json())
 
-// Routes
+// Regular Routes
 app
   // Index
   .get('/', (req, res) => {
@@ -33,6 +35,9 @@ app
   })
   // Auth
   .use('/auth', new AuthController().router)
+
+// Protected Routes
+app.use(sessionMiddleware)
 
 // After request middlewares
 app.use(errorMiddleware)
