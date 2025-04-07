@@ -122,6 +122,15 @@ describe('Auth Module', () => {
       expect(res.status).toBe(200)
     })
 
+    test('should set header on successful signin', async () => {
+      const res = await request
+        .post('/auth/signin')
+        .set('Content-Type', 'application/json')
+        .send(fakeUser)
+
+      expect(res.headers['set-cookie']).toBeDefined()
+    })
+
     test('should return 400 if password mismatch', async () => {
       const res = await request
         .post('/auth/signin')
