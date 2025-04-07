@@ -29,3 +29,18 @@ model Session {
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
+
+model Space {
+  id      Int     @id @default(autoincrement())
+  type    String?
+  typeId  Int?
+  name    String
+  address Json
+  status  Status
+  notes   String?
+}
+
+enum Status {
+  active
+  inactive
+}
