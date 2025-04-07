@@ -30,6 +30,18 @@ model Session {
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
+model Player {
+  id      Int     @id @default(autoincrement())
+  type    String?
+  typeId  Int?
+  size    String?
+  sizeId  Int?
+  name    String
+  address Json
+  status  Status
+  notes   String?
+}
+
 model Space {
   id      Int     @id @default(autoincrement())
   type    String?
