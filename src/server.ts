@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { logger } from '@/config/logger.config'
+import { errorMiddleware } from '@/middlewares/error.middleware'
 import { AuthController } from '@/modules/auth/'
 
 const app = express()
@@ -34,5 +35,6 @@ app
   .use('/auth', new AuthController().router)
 
 // After request middlewares
+app.use(errorMiddleware)
 
 export { app }

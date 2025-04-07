@@ -15,6 +15,8 @@ import { prisma } from '@/database/database'
 import { Service } from '@/structures/Service'
 import type { userSchema } from './auth.schema'
 import { NODE_ENV } from '@/config/env.config'
+import { NotFoundError, UniqueConstraintError } from '@/structures/Error'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 type SessionValidationResult =
   | { session: Session; user: User }
@@ -118,20 +120,31 @@ class AuthService extends Service {
   }
 
   async signup(body: z.infer<typeof userSchema>) {
-    const hash = await argon2.hash(body.password)
-    const user = await this.prisma.user.create({
-      data: { hash, email: body.email },
-    })
+    try {
+      const hash = await argon2.hash(body.password)
+      const user = await this.prisma.user.create({
+        data: { hash, email: body.email },
+      })
 
-    const token = this.generateSessionToken()
-    const session = await this.createSession(token, user.id)
+      const token = this.generateSessionToken()
+      const session = await this.createSession(token, user.id)
 
-    return session
+      return session
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new UniqueConstraintError(
+            'There is a unique constraint violation, a new user cannot be created with this email'
+          )
+        }
+      }
+      throw error
+    }
   }
 
   async signin(body: z.infer<typeof userSchema>) {
     const user = await prisma.user.findFirst({ where: { email: body.email } })
-    if (!user) return
+    if (!user) throw new NotFoundError('User not found')
 
     if (await argon2.verify(user.hash, body.password)) {
       const token = this.generateSessionToken()

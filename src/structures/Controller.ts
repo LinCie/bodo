@@ -4,7 +4,7 @@ import type { Request, Response, NextFunction } from 'express'
 interface RouteDefinition {
   method: 'get' | 'post' | 'put' | 'delete' | 'patch'
   path: string
-  handler: (req: Request, res: Response, next?: NextFunction) => void
+  handler: (req: Request, res: Response, next: NextFunction) => void
 }
 
 abstract class Controller {
