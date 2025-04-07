@@ -19,8 +19,7 @@ async function sessionMiddleware(
       }
     }
 
-    const cookies = req.cookies
-    const token = cookies['session']
+    const { token } = req.cookies
     if (!token) {
       throw new UnauthorizedError('No session cookies was found')
     }
