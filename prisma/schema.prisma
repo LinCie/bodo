@@ -31,15 +31,28 @@ model Session {
 }
 
 model Player {
-  id      Int     @id @default(autoincrement())
-  type    String?
+  id      Int         @id @default(autoincrement())
+  type    PlayerType?
   typeId  Int?
-  size    String?
+  size    PlayerSize?
   sizeId  Int?
   name    String
   address Json
-  status  Status
+  status  Status      @default(active)
   notes   String?
+}
+
+model Person {
+  id           Int       @id @default(autoincrement())
+  number       String    @unique
+  username     String    @unique
+  full_name    String?
+  birth_date   DateTime?
+  death_date   DateTime?
+  sex          String?
+  address      Json?
+  phone_number String?
+  status       Status    @default(active)
 }
 
 model Space {
@@ -48,11 +61,21 @@ model Space {
   typeId  Int?
   name    String
   address Json
-  status  Status
+  status  Status  @default(active)
   notes   String?
 }
 
 enum Status {
   active
   inactive
+}
+
+enum PlayerType {
+  space
+  user
+}
+
+enum PlayerSize {
+  person
+  group
 }
