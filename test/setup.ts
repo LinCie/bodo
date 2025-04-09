@@ -1,4 +1,12 @@
-import supertest from 'supertest'
-import { app } from '@/server'
+import { beforeAll } from 'vitest'
+import supertest, { Test } from 'supertest'
+import type TestAgent from 'supertest/lib/agent'
+import { server } from './global-setup'
 
-export const request = supertest(app)
+let request: TestAgent<Test>
+
+beforeAll(async () => {
+  request = supertest(server)
+})
+
+export { request }

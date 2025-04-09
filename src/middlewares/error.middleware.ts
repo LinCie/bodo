@@ -1,6 +1,9 @@
 import type { NextFunction, Request, Response } from 'express'
 import { ZodError } from 'zod'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library'
 import { NODE_ENV } from '@/config/env.config'
 import { logger } from '@/config/logger.config'
 
@@ -37,6 +40,11 @@ function errorMiddleware(
         res.status(500).send({ message: 'Unknown database error occurred' })
         break
     }
+  }
+
+  if (err instanceof PrismaClientValidationError) {
+    res.status(400).send({ message: err.message })
+    return
   }
 
   switch (err.constructor.name) {

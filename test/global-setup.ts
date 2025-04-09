@@ -1,11 +1,17 @@
+import { app } from '@/server'
 import { execSync } from 'child_process'
-import { prisma } from '@/database/database'
+import http from 'http'
+
+const server = http.createServer(app)
 
 export default async () => {
   execSync('npx prisma migrate reset --force --skip-seed', { stdio: 'inherit' })
-  await prisma.$connect()
 
   return async () => {
-    await prisma.$disconnect()
+    await new Promise<void>((resolve) => {
+      resolve()
+    })
   }
 }
+
+export { server }

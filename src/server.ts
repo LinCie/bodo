@@ -3,11 +3,12 @@ import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
-import { FRONTEND_URL, PORT } from '@/config/env.config'
+import { FRONTEND_URL } from '@/config/env.config'
 import { logger } from '@/config/logger.config'
 import { errorMiddleware } from '@/middlewares/error.middleware'
 import { sessionMiddleware } from '@/middlewares/session.middleware'
 import { AuthController } from '@/modules/auth/'
+import { PersonController } from './modules/person'
 
 const app = express()
 
@@ -37,13 +38,9 @@ app
   .use('/auth', new AuthController().router)
 
 // Protected Routes
-app.use(sessionMiddleware)
+app.use(sessionMiddleware).use('/people', new PersonController().router)
 
 // After request middlewares
 app.use(errorMiddleware)
-
-app.listen(PORT, () => {
-  logger.info(`Server is listening to port ${PORT} 🦊`)
-})
 
 export { app }

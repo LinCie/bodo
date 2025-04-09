@@ -46,12 +46,12 @@ model Person {
   id           Int       @id @default(autoincrement())
   number       String    @unique
   username     String    @unique
-  full_name    String?
-  birth_date   DateTime?
-  death_date   DateTime?
+  fullName    String?
+  birthDate   DateTime?
+  deathDate   DateTime?
   sex          String?
   address      Json?
-  phone_number String?
+  phoneNumber String?
   status       Status    @default(active)
 }
 

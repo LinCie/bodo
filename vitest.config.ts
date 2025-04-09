@@ -11,6 +11,8 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts'],
     globalSetup: ['./test/global-setup.ts'],
     environment: 'node',
+    globals: true,
+    isolate: true,
   },
   plugins: [tsconfigPaths()],
 })
