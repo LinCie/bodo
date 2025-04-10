@@ -14,6 +14,7 @@ class AuthController extends Controller {
     this.bindRoutes([
       { method: 'post', path: '/signup', handler: this.signup },
       { method: 'post', path: '/signin', handler: this.signin },
+      { method: 'delete', path: '/signout', handler: this.signout },
     ])
   }
 
@@ -53,6 +54,15 @@ class AuthController extends Controller {
         )
         return res.status(200).send()
       }
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async signout(req: Request, res: Response, next: NextFunction) {
+    try {
+      this.authService.deleteSessionTokenCookie(res)
+      return res.status(204).send()
     } catch (error) {
       next(error)
     }
