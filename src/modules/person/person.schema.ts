@@ -20,30 +20,26 @@ const personSchema = z.object({
     .string({
       invalid_type_error: 'full name must be a string',
     })
-    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ]+([ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/, {
-      message:
-        'full name must only contain letters, spaces, apostrophes, or hyphens, and must start and end with a letter',
-    })
-    .optional(),
+    .optional()
+    .refine(
+      (val) => {
+        if (val) {
+          return /^[A-Za-zÀ-ÖØ-öø-ÿ]+([ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/.test(val)
+        }
+        return true
+      },
+      {
+        message:
+          'Full name must only contain letters, spaces, apostrophes, or hyphens, and must start and end with a letter',
+      }
+    ),
 
   birthDate: z
-    .string({
-      invalid_type_error: 'birth date must be a string',
-    })
-    .datetime({
-      message:
-        'birth date must be a valid ISO 8601 datetime string (e.g., 1990-01-01T00:00:00.000Z)',
-    })
+    .date({ invalid_type_error: 'Birth date must be a date' })
     .optional(),
 
   deathDate: z
-    .string({
-      invalid_type_error: 'death date must be a string',
-    })
-    .datetime({
-      message:
-        'death date must be a valid ISO 8601 datetime string (e.g., 2077-01-01T00:00:00.000Z)',
-    })
+    .date({ invalid_type_error: 'Death date must be a date' })
     .optional(),
 
   sex: z

@@ -25,10 +25,10 @@ class AuthController extends Controller {
         throw new BadRequestError('Invalid email and/or password')
       }
 
-      const session = await this.authService.signup(validated.data)
+      const token = await this.authService.signup(validated.data)
       this.authService.setSessionTokenCookie(
         res,
-        session,
+        token,
         new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
       )
 
@@ -45,11 +45,11 @@ class AuthController extends Controller {
         throw new BadRequestError('Invalid email and/or password')
       }
 
-      const session = await this.authService.signin(validated.data)
-      if (session) {
+      const token = await this.authService.signin(validated.data)
+      if (token) {
         this.authService.setSessionTokenCookie(
           res,
-          session,
+          token,
           new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
         )
         return res.status(200).send()

@@ -97,10 +97,10 @@ class AuthService extends Service {
 
   setSessionTokenCookie(
     response: Response,
-    session: Session,
+    token: string,
     expiresAt: Date
   ): void {
-    response.cookie('session', session, {
+    response.cookie('session', token, {
       httpOnly: true,
       sameSite: 'lax',
       expires: expiresAt,
@@ -127,9 +127,8 @@ class AuthService extends Service {
       })
 
       const token = this.generateSessionToken()
-      const session = await this.createSession(token, user.id)
-
-      return session
+      await this.createSession(token, user.id)
+      return token
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -148,9 +147,8 @@ class AuthService extends Service {
 
     if (await argon2.verify(user.hash, body.password)) {
       const token = this.generateSessionToken()
-      const session = await this.createSession(token, user.id)
-
-      return session
+      await this.createSession(token, user.id)
+      return token
     }
 
     return

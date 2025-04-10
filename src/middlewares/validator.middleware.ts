@@ -5,7 +5,7 @@ const validatorMiddleware =
   (schema: ZodTypeAny) => (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = schema.parse(req.body)
-      req.body = result.data
+      req.body = result
       next()
     } catch (error) {
       next(error)

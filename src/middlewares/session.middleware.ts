@@ -19,13 +19,13 @@ async function sessionMiddleware(
       }
     }
 
-    const { token } = req.cookies
-    if (!token) {
+    const { session } = req.cookies
+    if (!session) {
       throw new UnauthorizedError('No session cookies was found')
     }
 
-    const { session, user } = await authService.validateSessionToken(token)
-    if (!session) {
+    const validated = await authService.validateSessionToken(session)
+    if (!validated.session) {
       authService.deleteSessionTokenCookie(res)
       throw new UnauthorizedError(
         'There is an error while verifying session cookies'
@@ -34,7 +34,7 @@ async function sessionMiddleware(
 
     authService.setSessionTokenCookie(res, session, SESSION_EXPIRY_MS)
 
-    req.user = user
+    req.user = validated.user
     next()
   } catch (error) {
     next(error)
