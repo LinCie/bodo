@@ -83,6 +83,8 @@ const personSchema = z.object({
       message: "status must be either 'active' or 'inactive'",
     }),
   }),
+
+  notes: z.string().optional(),
 })
 
 const partialPersonSchema = personSchema.partial()
