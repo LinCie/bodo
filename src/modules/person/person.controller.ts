@@ -26,10 +26,12 @@ class PersonController extends Controller {
 
   async index(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 0, show = 10 } = req.query
+      const { page = 1, show = 10, search = '', searchBy = '' } = req.query
       const persons = await this.personService.getPersons(
         Number(page),
-        Number(show)
+        Number(show),
+        search as string,
+        searchBy as string
       )
       return res.status(200).send(persons)
     } catch (error) {

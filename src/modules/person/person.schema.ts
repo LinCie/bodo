@@ -35,12 +35,20 @@ const personSchema = z.object({
     ),
 
   birthDate: z
-    .date({ invalid_type_error: 'Birth date must be a date' })
-    .optional(),
+    .string()
+    .optional()
+    .refine((val) => !val || !isNaN(Date.parse(val)), {
+      message: 'Invalid date format',
+    })
+    .transform((val) => (val ? new Date(val) : undefined)),
 
   deathDate: z
-    .date({ invalid_type_error: 'Death date must be a date' })
-    .optional(),
+    .string()
+    .optional()
+    .refine((val) => !val || !isNaN(Date.parse(val)), {
+      message: 'Invalid date format',
+    })
+    .transform((val) => (val ? new Date(val) : undefined)),
 
   sex: z
     .string({
