@@ -37,11 +37,12 @@ src/
 │   │   ├── application/         # Use cases, DTOs, validation schemas
 │   │   ├── infrastructure/      # Repositories, external services
 │   │   └── presentation/        # HTTP handlers, routes
+│   ├── inventories/             # Inventories feature (same structure)
 │   └── items/                   # Items feature (same structure)
 ├── shared/                      # Shared code across features
 │   ├── domain/                  # BaseEntity, Result type, errors
 │   ├── application/             # Validation utilities
-│   ├── infrastructure/          # Mappers, middlewares, logger
+│   ├── infrastructure/          # Mappers, middlewares, logger, persistence
 │   └── presentation/            # Common HTTP utilities
 └── server.ts                    # Application entry point
 

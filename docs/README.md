@@ -59,6 +59,17 @@ Checklists and rules for development workflows.
 | **Zod**        | Schema validation                |
 | **fast-check** | Property-based testing           |
 
+## Project Structure
+
+```
+src/
+├── features/          # Feature slices (self-contained)
+├── shared/            # Shared code across features
+└── server.ts          # Application entry point
+
+test/                  # Test suite mirroring src/
+```
+
 ## Key Concepts
 
 - **Vertical Slice Architecture**: Features organized as self-contained slices
@@ -78,4 +89,8 @@ deno task test         # Run all tests
 
 # Production
 deno task start        # Start production server
+
+# Code quality
+deno lint              # Check linting
+deno fmt               # Format code
 ```

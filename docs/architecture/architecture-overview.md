@@ -64,23 +64,22 @@ graph TB
 
 ```
 src/
-├── features/                    # Feature slices
-│   ├── auth/                    # Authentication feature
-│   │   ├── domain/              # Entities, value objects, errors
-│   │   ├── application/         # Use cases, DTOs, validation
-│   │   ├── infrastructure/      # Repositories, external services
-│   │   └── presentation/        # HTTP handlers, routes
-│   └── items/                   # Items feature
-│       ├── domain/
-│       ├── application/
-│       ├── infrastructure/
-│       └── presentation/
+├── features/                    # Feature slices (self-contained)
+│   └── [feature-name]/          # Each feature follows vertical slice pattern
+│       ├── domain/              # Entities, value objects, errors
+│       ├── application/         # Use cases, DTOs, validation schemas
+│       ├── infrastructure/      # Repositories, external services
+│       └── presentation/        # HTTP handlers, routes
 ├── shared/                      # Shared code across features
-│   ├── domain/                  # Base classes, common errors, Result type
+│   ├── domain/                  # BaseEntity, Result type, common errors
 │   ├── application/             # Validation utilities
 │   ├── infrastructure/          # Mappers, middlewares, logger
 │   └── presentation/            # Common HTTP utilities
 └── server.ts                    # Application entry point
+
+test/                            # Test suite mirroring src/ structure
+├── shared/                      # Tests for shared modules
+└── features/                    # Tests for feature slices
 ```
 
 ## Shared Module
