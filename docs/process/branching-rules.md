@@ -4,13 +4,13 @@ Git workflow and branch management guidelines.
 
 ## Branch Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Feature | `feature/<ticket-id>-<short-description>` | `feature/123-user-authentication` |
-| Bug fix | `fix/<ticket-id>-<short-description>` | `fix/456-login-validation-error` |
-| Documentation | `docs/<short-description>` | `docs/api-reference-update` |
-| Refactor | `refactor/<short-description>` | `refactor/user-repository-cleanup` |
-| Hotfix | `hotfix/<ticket-id>-<short-description>` | `hotfix/789-critical-auth-bug` |
+| Type          | Pattern                                   | Example                            |
+| ------------- | ----------------------------------------- | ---------------------------------- |
+| Feature       | `feature/<ticket-id>-<short-description>` | `feature/123-user-authentication`  |
+| Bug fix       | `fix/<ticket-id>-<short-description>`     | `fix/456-login-validation-error`   |
+| Documentation | `docs/<short-description>`                | `docs/api-reference-update`        |
+| Refactor      | `refactor/<short-description>`            | `refactor/user-repository-cleanup` |
+| Hotfix        | `hotfix/<ticket-id>-<short-description>`  | `hotfix/789-critical-auth-bug`     |
 
 ### Naming Rules
 
@@ -20,6 +20,7 @@ Git workflow and branch management guidelines.
 - Include ticket/issue ID when applicable
 
 **DO:**
+
 ```
 feature/123-add-password-reset
 fix/456-handle-null-email
@@ -27,6 +28,7 @@ docs/update-readme
 ```
 
 **DON'T:**
+
 ```
 Feature/123-Add-Password-Reset    # Wrong case
 feature/addPasswordReset          # No hyphens, no ticket

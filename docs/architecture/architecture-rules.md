@@ -9,12 +9,15 @@ Required and prohibited patterns with comprehensive examples.
 Every function that can fail must return a `Result<T, E>` type.
 
 **DO:**
+
 ```typescript
 function findUser(id: string): Promise<Result<User | null, DomainError>> {
   // Implementation
 }
 
-function createUser(data: CreateUserDTO): Promise<Result<User, ValidationError | DatabaseError>> {
+function createUser(
+  data: CreateUserDTO,
+): Promise<Result<User, ValidationError | DatabaseError>> {
   // Implementation
 }
 
@@ -33,6 +36,7 @@ if (result.isErr()) {
 All domain entities must extend `BaseEntity` to inherit common properties.
 
 **DO:**
+
 ```typescript
 import { BaseEntity, BaseEntityProps } from "#/shared/domain/entity.ts";
 
@@ -58,23 +62,34 @@ class User extends BaseEntity {
 All repositories must implement the `BaseRepository` interface.
 
 **DO:**
+
 ```typescript
 import { BaseRepository } from "#/shared/domain/repository.ts";
 
-class UserRepository implements BaseRepository<User, CreateUserDTO, UpdateUserDTO> {
-  async findById(id: string): Promise<Result<User | null, DomainError>> { /* ... */ }
-  async findAll(): Promise<Result<User[], DomainError>> { /* ... */ }
-  async create(data: CreateUserDTO): Promise<Result<User, DomainError>> { /* ... */ }
-  async update(id: string, data: UpdateUserDTO): Promise<Result<User, DomainError>> { /* ... */ }
-  async delete(id: string): Promise<Result<boolean, DomainError>> { /* ... */ }
+class UserRepository
+  implements BaseRepository<User, CreateUserDTO, UpdateUserDTO> {
+  async findById(id: string): Promise<Result<User | null, DomainError>> {
+    /* ... */
+  }
+  async findAll(): Promise<Result<User[], DomainError>> {/* ... */}
+  async create(data: CreateUserDTO): Promise<Result<User, DomainError>> {
+    /* ... */
+  }
+  async update(
+    id: string,
+    data: UpdateUserDTO,
+  ): Promise<Result<User, DomainError>> {/* ... */}
+  async delete(id: string): Promise<Result<boolean, DomainError>> {/* ... */}
 }
 ```
 
 ### 4. Zod Validation for External Input
 
-All external input must be validated using Zod schemas and the `validate()` helper.
+All external input must be validated using Zod schemas and the `validate()`
+helper.
 
 **DO:**
+
 ```typescript
 import { z } from "zod";
 import { validate } from "#/shared/application/validation.ts";
@@ -84,7 +99,9 @@ const createUserSchema = z.object({
   name: z.string().min(1).max(100),
 });
 
-async function createUser(input: unknown): Promise<Result<User, ValidationError | DatabaseError>> {
+async function createUser(
+  input: unknown,
+): Promise<Result<User, ValidationError | DatabaseError>> {
   const validationResult = validate(createUserSchema, input);
   if (validationResult.isErr()) {
     return validationResult;
@@ -101,6 +118,7 @@ async function createUser(input: unknown): Promise<Result<User, ValidationError 
 ### 1. Throwing Exceptions for Business Logic
 
 **DON'T:**
+
 ```typescript
 function findUser(id: string): Promise<User> {
   const user = await repository.findById(id);
@@ -112,6 +130,7 @@ function findUser(id: string): Promise<User> {
 ```
 
 **DO:**
+
 ```typescript
 function findUser(id: string): Promise<Result<User | null, NotFoundError>> {
   const user = await repository.findById(id);
@@ -125,15 +144,18 @@ function findUser(id: string): Promise<Result<User | null, NotFoundError>> {
 ### 2. Direct Database Access Outside Repositories
 
 **DON'T:**
+
 ```typescript
 // In application layer
 async function getUserEmail(id: string): Promise<string> {
-  const row = await db.selectFrom("users").where("id", "=", id).executeTakeFirst(); // ❌ Wrong!
+  const row = await db.selectFrom("users").where("id", "=", id)
+    .executeTakeFirst(); // ❌ Wrong!
   return row.email;
 }
 ```
 
 **DO:**
+
 ```typescript
 // In application layer
 async function getUserEmail(id: string): Promise<Result<string, DomainError>> {
@@ -147,6 +169,7 @@ async function getUserEmail(id: string): Promise<Result<string, DomainError>> {
 ### 3. Circular Dependencies Between Features
 
 **DON'T:**
+
 ```typescript
 // In items feature
 import { UserRepository } from "#/features/auth/infrastructure/user.repository.ts";
@@ -159,6 +182,7 @@ import { ItemRepository } from "#/features/items/infrastructure/item.repository.
 ### 4. Domain Layer Depending on Infrastructure
 
 **DON'T:**
+
 ```typescript
 // In domain/user.entity.ts
 import { Kysely } from "kysely"; // ❌ Wrong! Domain should be pure
@@ -166,6 +190,7 @@ import { db } from "#/shared/infrastructure/database.ts"; // ❌ Wrong!
 ```
 
 **DO:**
+
 ```typescript
 // Domain layer has no infrastructure imports
 // Use interfaces defined in domain, implemented in infrastructure
@@ -178,6 +203,7 @@ import { db } from "#/shared/infrastructure/database.ts"; // ❌ Wrong!
 ### When Slice A Needs Data from Slice B
 
 **DON'T:**
+
 ```typescript
 // In items feature - directly importing from auth
 import { UserRepository } from "#/features/auth/infrastructure/user.repository.ts"; // ❌ Wrong!
@@ -207,7 +233,7 @@ class UserLookupService implements IUserLookup {
 // In items feature - depend on interface only
 class ItemService {
   constructor(private userLookup: IUserLookup) {}
-  
+
   async createItem(userId: string, data: CreateItemDTO) {
     const userResult = await this.userLookup.findById(userId);
     // ...
@@ -218,6 +244,7 @@ class ItemService {
 ### When Slice A Needs to Trigger Action in Slice B
 
 **DON'T:**
+
 ```typescript
 // Directly calling another slice's application layer
 import { notifyUser } from "#/features/auth/application/notify-user.ts"; // ❌ Wrong!
@@ -249,6 +276,7 @@ eventBus.subscribe<ItemCreatedEvent>("ItemCreated", async (event) => {
 ### Anti-Corruption Layer
 
 **DON'T:**
+
 ```typescript
 // Passing another slice's entity directly
 const user: User = await authService.getUser(id); // User is auth's entity

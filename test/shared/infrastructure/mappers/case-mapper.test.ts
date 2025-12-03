@@ -1,10 +1,10 @@
 import { assertEquals } from "@std/assert";
 import * as fc from "fast-check";
 import {
-  snakeToCamel,
   camelToSnake,
-  mapRowToEntity,
   mapEntityToRow,
+  mapRowToEntity,
+  snakeToCamel,
 } from "#/shared/infrastructure/mappers/case-mapper.ts";
 
 /**
@@ -20,15 +20,27 @@ import {
 // Generator for valid snake_case strings (lowercase letters with underscores between words)
 // Each word must have at least 2 chars to ensure proper round-trip with std library
 const snakeCaseString = fc
-  .array(fc.stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz'), { minLength: 2, maxLength: 10 }), { minLength: 1, maxLength: 5 })
+  .array(
+    fc.stringOf(fc.constantFrom(..."abcdefghijklmnopqrstuvwxyz"), {
+      minLength: 2,
+      maxLength: 10,
+    }),
+    { minLength: 1, maxLength: 5 },
+  )
   .map((parts) => parts.join("_"));
 
 // Generator for valid camelCase strings (starts with lowercase, subsequent words start with single uppercase)
 // Each word must have at least 2 chars to ensure proper round-trip with std library
 const camelCaseString = fc
-  .array(fc.stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz'), { minLength: 2, maxLength: 10 }), { minLength: 1, maxLength: 5 })
-  .map((parts) => 
-    parts.map((part, index) => 
+  .array(
+    fc.stringOf(fc.constantFrom(..."abcdefghijklmnopqrstuvwxyz"), {
+      minLength: 2,
+      maxLength: 10,
+    }),
+    { minLength: 1, maxLength: 5 },
+  )
+  .map((parts) =>
+    parts.map((part, index) =>
       index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)
     ).join("")
   );
@@ -40,7 +52,7 @@ Deno.test("snakeToCamel - converts snake_case to camelCase correctly", () => {
       // Result should not contain underscores (except at start if original started with underscore)
       assertEquals(result.includes("_"), false);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -51,7 +63,7 @@ Deno.test("camelToSnake - converts camelCase to snake_case correctly", () => {
       // Result should be all lowercase
       assertEquals(result, result.toLowerCase());
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -62,7 +74,7 @@ Deno.test("snake_case to camelCase round-trip preserves original string", () => 
       const backToSnake = camelToSnake(camel);
       assertEquals(backToSnake, str);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -73,15 +85,14 @@ Deno.test("camelCase to snake_case round-trip preserves original string", () => 
       const backToCamel = snakeToCamel(snake);
       assertEquals(backToCamel, str);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
-
 
 // Generator for database row objects with snake_case keys
 const snakeCaseRow = fc.dictionary(
   snakeCaseString,
-  fc.oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null))
+  fc.oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null)),
 );
 
 Deno.test("mapRowToEntity and mapEntityToRow round-trip preserves all values", () => {
@@ -91,7 +102,7 @@ Deno.test("mapRowToEntity and mapEntityToRow round-trip preserves all values", (
       const backToRow = mapEntityToRow(entity);
       assertEquals(backToRow, row);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -104,7 +115,7 @@ Deno.test("mapRowToEntity converts all keys from snake_case to camelCase", () =>
         assertEquals(key.includes("_"), false);
       }
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -112,7 +123,7 @@ Deno.test("mapEntityToRow converts all keys from camelCase to snake_case", () =>
   // Generator for entity objects with camelCase keys
   const camelCaseEntity = fc.dictionary(
     camelCaseString,
-    fc.oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null))
+    fc.oneof(fc.string(), fc.integer(), fc.boolean(), fc.constant(null)),
   );
 
   fc.assert(
@@ -123,7 +134,7 @@ Deno.test("mapEntityToRow converts all keys from camelCase to snake_case", () =>
         assertEquals(key, key.toLowerCase());
       }
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 

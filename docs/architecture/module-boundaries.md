@@ -28,11 +28,13 @@ graph TB
 The domain layer is the core and has **no dependencies** on other layers.
 
 **Allowed imports:**
+
 - Other domain files within the same feature
 - Shared domain (`#/shared/domain/`)
 - Standard library types
 
 **Forbidden imports:**
+
 - Application layer
 - Infrastructure layer
 - Presentation layer
@@ -53,11 +55,13 @@ import { Hono } from "hono";
 ### Application Layer
 
 **Allowed imports:**
+
 - Domain layer (same feature and shared)
 - Shared application (`#/shared/application/`)
 - External libraries for validation (Zod)
 
 **Forbidden imports:**
+
 - Infrastructure layer
 - Presentation layer
 
@@ -76,11 +80,13 @@ import { app } from "../presentation/routes.ts";
 ### Infrastructure Layer
 
 **Allowed imports:**
+
 - Domain layer (same feature and shared)
 - Shared infrastructure (`#/shared/infrastructure/`)
 - External libraries (Kysely, etc.)
 
 **Forbidden imports:**
+
 - Application layer
 - Presentation layer
 
@@ -99,6 +105,7 @@ import { userRoutes } from "../presentation/routes.ts";
 ### Presentation Layer
 
 **Allowed imports:**
+
 - Application layer (same feature)
 - Domain layer (for types/errors)
 - Shared modules
@@ -122,12 +129,14 @@ src/features/
 ```
 
 **❌ Forbidden:**
+
 ```typescript
 // In src/features/items/application/item.service.ts
 import { UserRepository } from "#/features/auth/infrastructure/user.repository.ts";
 ```
 
-**✅ Allowed:** Use shared interfaces for cross-slice communication (see [Architecture Rules](./architecture-rules.md#cross-slice-communication-rules)).
+**✅ Allowed:** Use shared interfaces for cross-slice communication (see
+[Architecture Rules](./architecture-rules.md#cross-slice-communication-rules)).
 
 ## Shared Module Access
 
@@ -178,4 +187,6 @@ When features need to interact:
 2. **Event-driven**: Define events in `#/shared/domain/events/`
 3. **Anti-corruption**: Create adapters to map between slice models
 
-See [Architecture Rules - Cross-Slice Communication](./architecture-rules.md#cross-slice-communication-rules) for detailed examples.
+See
+[Architecture Rules - Cross-Slice Communication](./architecture-rules.md#cross-slice-communication-rules)
+for detailed examples.

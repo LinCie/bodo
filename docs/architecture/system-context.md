@@ -1,6 +1,7 @@
 # System Context
 
-This document describes how the application fits within its environment, including external interfaces, runtime considerations, and integration patterns.
+This document describes how the application fits within its environment,
+including external interfaces, runtime considerations, and integration patterns.
 
 ## External Interfaces
 
@@ -43,11 +44,11 @@ The application exposes a REST API via Hono framework:
 
 Deno runs with explicit permissions. The application requires:
 
-| Permission | Flag | Purpose |
-|------------|------|---------|
-| Network | `--allow-net` | HTTP server, database connections |
+| Permission  | Flag          | Purpose                                 |
+| ----------- | ------------- | --------------------------------------- |
+| Network     | `--allow-net` | HTTP server, database connections       |
 | Environment | `--allow-env` | Configuration via environment variables |
-| System | `--allow-sys` | System information access |
+| System      | `--allow-sys` | System information access               |
 
 ```bash
 # Development with all required permissions
@@ -59,7 +60,8 @@ deno run --allow-net --allow-env ./src/server.ts
 
 ### TypeScript Support
 
-Deno has built-in TypeScript support with no compilation step required. The project uses:
+Deno has built-in TypeScript support with no compilation step required. The
+project uses:
 
 - Strict mode enabled
 - JSX precompilation for Hono JSX support
@@ -109,14 +111,16 @@ await db
 Repositories encapsulate all database queries:
 
 ```typescript
-interface UserRepository extends BaseRepository<User, CreateUserDTO, UpdateUserDTO> {
+interface UserRepository
+  extends BaseRepository<User, CreateUserDTO, UpdateUserDTO> {
   findByEmail(email: string): Promise<Result<User | null, DomainError>>;
 }
 ```
 
 ### Case Mapping
 
-Database rows (snake_case) are mapped to entities (camelCase) using shared mappers:
+Database rows (snake_case) are mapped to entities (camelCase) using shared
+mappers:
 
 ```typescript
 import { mapRowToEntity } from "#/shared/infrastructure/mappers/index.ts";
@@ -142,8 +146,8 @@ const user = mapRowToEntity<User>(row);
 
 Domain errors map to HTTP status codes:
 
-| Domain Error | HTTP Status |
-|--------------|-------------|
-| `ValidationError` | 400 Bad Request |
-| `NotFoundError` | 404 Not Found |
-| `DatabaseError` | 500 Internal Server Error |
+| Domain Error      | HTTP Status               |
+| ----------------- | ------------------------- |
+| `ValidationError` | 400 Bad Request           |
+| `NotFoundError`   | 404 Not Found             |
+| `DatabaseError`   | 500 Internal Server Error |

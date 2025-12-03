@@ -15,7 +15,7 @@ import { ValidationError } from "#/shared/domain/errors.ts";
  */
 export function validate<T>(
   schema: z.ZodSchema<T>,
-  data: unknown
+  data: unknown,
 ): Result<T, ValidationError> {
   const result = schema.safeParse(data);
 

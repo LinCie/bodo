@@ -4,17 +4,18 @@ Instructions for AI agents working on this codebase.
 
 ## Project Overview
 
-Deno + Hono REST API using vertical slice architecture with clean architecture principles. TypeScript-first with strict mode enabled.
+Deno + Hono REST API using vertical slice architecture with clean architecture
+principles. TypeScript-first with strict mode enabled.
 
 ## Technology Stack
 
-| Technology | Purpose |
-|------------|---------|
-| Deno | Runtime with built-in TypeScript |
-| Hono | Web framework for HTTP routing |
-| Kysely | Type-safe SQL query builder |
-| Zod | Schema validation |
-| fast-check | Property-based testing |
+| Technology | Purpose                          |
+| ---------- | -------------------------------- |
+| Deno       | Runtime with built-in TypeScript |
+| Hono       | Web framework for HTTP routing   |
+| Kysely     | Type-safe SQL query builder      |
+| Zod        | Schema validation                |
+| fast-check | Property-based testing           |
 
 ## Commands
 
@@ -51,7 +52,8 @@ test/                            # Mirrors src/ structure
 
 ### Layer Dependencies (CRITICAL)
 
-Dependencies MUST point inward toward domain. The domain layer has NO external dependencies.
+Dependencies MUST point inward toward domain. The domain layer has NO external
+dependencies.
 
 ```
 Presentation → Application → Domain ← Infrastructure
@@ -59,12 +61,12 @@ Presentation → Application → Domain ← Infrastructure
 
 **Allowed imports per layer:**
 
-| Layer | Can Import From |
-|-------|-----------------|
-| Domain | Shared domain only, NO infrastructure/application |
-| Application | Domain, shared application, Zod |
-| Infrastructure | Domain, shared infrastructure, Kysely |
-| Presentation | Application, domain, Hono |
+| Layer          | Can Import From                                   |
+| -------------- | ------------------------------------------------- |
+| Domain         | Shared domain only, NO infrastructure/application |
+| Application    | Domain, shared application, Zod                   |
+| Infrastructure | Domain, shared infrastructure, Kysely             |
+| Presentation   | Application, domain, Hono                         |
 
 ### Import Alias
 
@@ -80,7 +82,8 @@ import { Result } from "../../../../shared/domain/result.ts";
 
 ### Feature Slice Isolation
 
-Feature slices MUST NOT import directly from each other. Use shared interfaces for cross-slice communication.
+Feature slices MUST NOT import directly from each other. Use shared interfaces
+for cross-slice communication.
 
 ```typescript
 // ❌ FORBIDDEN
@@ -147,12 +150,20 @@ All repositories MUST implement `BaseRepository` interface:
 ```typescript
 import { BaseRepository } from "#/shared/domain/repository.ts";
 
-class ItemRepository implements BaseRepository<Item, CreateItemDTO, UpdateItemDTO> {
-  async findById(id: string): Promise<Result<Item | null, DomainError>> { /* ... */ }
-  async findAll(): Promise<Result<Item[], DomainError>> { /* ... */ }
-  async create(data: CreateItemDTO): Promise<Result<Item, DomainError>> { /* ... */ }
-  async update(id: string, data: UpdateItemDTO): Promise<Result<Item, DomainError>> { /* ... */ }
-  async delete(id: string): Promise<Result<boolean, DomainError>> { /* ... */ }
+class ItemRepository
+  implements BaseRepository<Item, CreateItemDTO, UpdateItemDTO> {
+  async findById(id: string): Promise<Result<Item | null, DomainError>> {
+    /* ... */
+  }
+  async findAll(): Promise<Result<Item[], DomainError>> {/* ... */}
+  async create(data: CreateItemDTO): Promise<Result<Item, DomainError>> {
+    /* ... */
+  }
+  async update(
+    id: string,
+    data: UpdateItemDTO,
+  ): Promise<Result<Item, DomainError>> {/* ... */}
+  async delete(id: string): Promise<Result<boolean, DomainError>> {/* ... */}
 }
 ```
 
@@ -169,7 +180,9 @@ const createItemSchema = z.object({
   description: z.string().max(1000).optional(),
 });
 
-async function createItem(input: unknown): Promise<Result<Item, ValidationError | DomainError>> {
+async function createItem(
+  input: unknown,
+): Promise<Result<Item, ValidationError | DomainError>> {
   const validationResult = validate(createItemSchema, input);
   if (validationResult.isErr()) {
     return validationResult;
@@ -202,32 +215,36 @@ Always filter soft-deleted records in queries:
 
 ```typescript
 const rows = await db.selectFrom("items")
-  .where("deleted_at", "is", null)  // Required!
+  .where("deleted_at", "is", null) // Required!
   .execute();
 ```
 
 ### 6. Case Mapping Convention
 
-| Context | Convention | Example |
-|---------|------------|---------|
-| Database columns | snake_case | `created_at`, `user_id` |
-| TypeScript properties | camelCase | `createdAt`, `userId` |
-| File names | kebab-case | `user-repository.ts` |
-| Classes/Interfaces | PascalCase | `UserEntity`, `CreateUserDTO` |
+| Context               | Convention | Example                       |
+| --------------------- | ---------- | ----------------------------- |
+| Database columns      | snake_case | `created_at`, `user_id`       |
+| TypeScript properties | camelCase  | `createdAt`, `userId`         |
+| File names            | kebab-case | `user-repository.ts`          |
+| Classes/Interfaces    | PascalCase | `UserEntity`, `CreateUserDTO` |
 
 Use case mappers for database operations:
 
 ```typescript
-import { mapRowToEntity, mapEntityToRow } from "#/shared/infrastructure/mappers/index.ts";
+import {
+  mapEntityToRow,
+  mapRowToEntity,
+} from "#/shared/infrastructure/mappers/index.ts";
 
-const user = mapRowToEntity<User>(row);  // snake_case → camelCase
-const row = mapEntityToRow(user);        // camelCase → snake_case
+const user = mapRowToEntity<User>(row); // snake_case → camelCase
+const row = mapEntityToRow(user); // camelCase → snake_case
 ```
 
 ## Prohibited Patterns
 
 1. **Throwing exceptions for business logic** - Use Result type
-2. **Direct database access outside repositories** - All DB queries in infrastructure layer
+2. **Direct database access outside repositories** - All DB queries in
+   infrastructure layer
 3. **Circular dependencies between features** - Use shared interfaces
 4. **Domain layer importing infrastructure** - Domain must be pure
 5. **Physical deletion of records** - Use soft deletion
@@ -236,23 +253,23 @@ const row = mapEntityToRow(user);        // camelCase → snake_case
 
 ## Naming Conventions
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| Variables/Functions | camelCase | `userName`, `findById()` |
-| Classes/Interfaces | PascalCase | `UserEntity`, `CreateUserDTO` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES` |
-| Files | kebab-case | `user-repository.ts` |
-| Database columns | snake_case | `created_at` |
+| Element             | Convention       | Example                       |
+| ------------------- | ---------------- | ----------------------------- |
+| Variables/Functions | camelCase        | `userName`, `findById()`      |
+| Classes/Interfaces  | PascalCase       | `UserEntity`, `CreateUserDTO` |
+| Constants           | UPPER_SNAKE_CASE | `MAX_RETRIES`                 |
+| Files               | kebab-case       | `user-repository.ts`          |
+| Database columns    | snake_case       | `created_at`                  |
 
 ## Error Handling
 
 ### Error Types
 
-| Error Type | HTTP Status | Use Case |
-|------------|-------------|----------|
-| `ValidationError` | 400 | Invalid input |
-| `NotFoundError` | 404 | Resource not found |
-| `DatabaseError` | 500 | Data access failure |
+| Error Type        | HTTP Status | Use Case            |
+| ----------------- | ----------- | ------------------- |
+| `ValidationError` | 400         | Invalid input       |
+| `NotFoundError`   | 404         | Resource not found  |
+| `DatabaseError`   | 500         | Data access failure |
 
 ### Error Propagation
 
@@ -261,7 +278,7 @@ Use early returns on errors:
 ```typescript
 const result = await repository.findById(id);
 if (result.isErr()) {
-  return result;  // Propagate error
+  return result; // Propagate error
 }
 const entity = result.value;
 ```
@@ -286,8 +303,8 @@ Deno.test("Item creation preserves all input data", () => {
       (input) => {
         const item = createItem(input);
         return item.name === input.name;
-      }
-    )
+      },
+    ),
   );
 });
 ```
@@ -349,7 +366,7 @@ export interface IUserLookup {
 }
 
 // Implement in source feature (auth)
-class UserLookupService implements IUserLookup { /* ... */ }
+class UserLookupService implements IUserLookup {/* ... */}
 
 // Consume in target feature (items) via dependency injection
 class ItemService {
@@ -368,6 +385,7 @@ Types: feat, fix, docs, style, refactor, test, chore
 ```
 
 Examples:
+
 ```
 feat(auth): add password reset functionality
 fix(items): handle null description in item creation
@@ -382,7 +400,8 @@ docs: update API endpoint documentation
 
 ## Library Documentation (CRITICAL)
 
-AI agents have NO prior knowledge of any library, framework, or package. Before using ANY library (including Hono, Kysely, Zod, fast-check, etc.), agents MUST:
+AI agents have NO prior knowledge of any library, framework, or package. Before
+using ANY library (including Hono, Kysely, Zod, fast-check, etc.), agents MUST:
 
 1. **Resolve the library ID** using `mcp_Context7_resolve_library_id`
 2. **Fetch current documentation** using `mcp_Context7_get_library_docs`
@@ -390,7 +409,7 @@ AI agents have NO prior knowledge of any library, framework, or package. Before 
 ```typescript
 // ❌ FORBIDDEN - Using library without checking Context7
 import { Hono } from "hono";
-const app = new Hono();  // Don't assume API knowledge
+const app = new Hono(); // Don't assume API knowledge
 
 // ✅ REQUIRED - Always fetch docs first
 // 1. Call: mcp_Context7_resolve_library_id({ libraryName: "hono" })
@@ -399,10 +418,12 @@ const app = new Hono();  // Don't assume API knowledge
 ```
 
 **This applies to:**
+
 - Hono (routing, middleware, context)
 - Kysely (query building, migrations)
 - Zod (schema definitions, validation)
 - fast-check (arbitraries, properties)
 - Any new dependency added to the project
 
-**No exceptions.** Do not rely on training data for library APIs—always verify with Context7.
+**No exceptions.** Do not rely on training data for library APIs—always verify
+with Context7.

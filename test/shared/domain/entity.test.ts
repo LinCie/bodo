@@ -11,7 +11,7 @@ class TestEntity extends BaseEntity {
 
 // Generator for valid BaseEntityProps
 const baseEntityPropsArb = fc.record({
-  id: fc.uuid(),
+  id: fc.integer({ min: 1 }),
   createdAt: fc.date(),
   updatedAt: fc.date(),
   deletedAt: fc.option(fc.date(), { nil: null }),
@@ -26,14 +26,14 @@ const baseEntityPropsArb = fc.record({
  * Validates: Requirements 1.1, 1.2, 1.3, 1.4
  */
 
-Deno.test("BaseEntity - has id property of type string", () => {
+Deno.test("BaseEntity - has id property of type number", () => {
   fc.assert(
     fc.property(baseEntityPropsArb, (props) => {
       const entity = new TestEntity(props);
-      assertEquals(typeof entity.id, "string");
+      assertEquals(typeof entity.id, "number");
       assertEquals(entity.id, props.id);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -44,10 +44,9 @@ Deno.test("BaseEntity - has createdAt property of type Date", () => {
       assertEquals(entity.createdAt instanceof Date, true);
       assertEquals(entity.createdAt.getTime(), props.createdAt.getTime());
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
-
 
 Deno.test("BaseEntity - has updatedAt property of type Date", () => {
   fc.assert(
@@ -56,7 +55,7 @@ Deno.test("BaseEntity - has updatedAt property of type Date", () => {
       assertEquals(entity.updatedAt instanceof Date, true);
       assertEquals(entity.updatedAt.getTime(), props.updatedAt.getTime());
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -71,7 +70,7 @@ Deno.test("BaseEntity - has deletedAt property of type Date or null", () => {
         assertEquals(entity.deletedAt!.getTime(), props.deletedAt.getTime());
       }
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -82,7 +81,7 @@ Deno.test("BaseEntity - isDeleted returns true when deletedAt is set", () => {
       const expected = props.deletedAt !== null;
       assertEquals(entity.isDeleted(), expected);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -98,16 +97,16 @@ Deno.test("BaseEntity - isDeleted returns true when deletedAt is set", () => {
 Deno.test("BaseEntity - equals returns true for entities with same id", () => {
   fc.assert(
     fc.property(
-      fc.uuid(),
+      fc.integer({ min: 1 }),
       baseEntityPropsArb,
       baseEntityPropsArb,
       (sharedId, props1, props2) => {
         const entity1 = new TestEntity({ ...props1, id: sharedId });
         const entity2 = new TestEntity({ ...props2, id: sharedId });
         assertEquals(entity1.equals(entity2), true);
-      }
+      },
     ),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -122,16 +121,16 @@ Deno.test("BaseEntity - equals returns false for entities with different ids", (
         const entity1 = new TestEntity(props1);
         const entity2 = new TestEntity(props2);
         assertEquals(entity1.equals(entity2), false);
-      }
+      },
     ),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
 // Unit tests for edge cases
 Deno.test("BaseEntity - handles entity with null deletedAt", () => {
   const props: BaseEntityProps = {
-    id: "test-id-123",
+    id: 123,
     createdAt: new Date("2024-01-01"),
     updatedAt: new Date("2024-01-02"),
     deletedAt: null,
@@ -144,7 +143,7 @@ Deno.test("BaseEntity - handles entity with null deletedAt", () => {
 Deno.test("BaseEntity - handles entity with set deletedAt", () => {
   const deletedDate = new Date("2024-01-03");
   const props: BaseEntityProps = {
-    id: "test-id-456",
+    id: 456,
     createdAt: new Date("2024-01-01"),
     updatedAt: new Date("2024-01-02"),
     deletedAt: deletedDate,
@@ -156,7 +155,7 @@ Deno.test("BaseEntity - handles entity with set deletedAt", () => {
 
 Deno.test("BaseEntity - equality is reflexive", () => {
   const props: BaseEntityProps = {
-    id: "test-id-789",
+    id: 789,
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,

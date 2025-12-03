@@ -19,7 +19,7 @@ export class NotFoundError extends DomainError {
 
   constructor(
     readonly resource: string,
-    readonly id: string
+    readonly id: number,
   ) {
     const message = `${resource} with id '${id}' not found`;
     super(message);
@@ -32,7 +32,7 @@ export class ValidationError extends DomainError {
 
   constructor(
     readonly message: string,
-    readonly details: Record<string, string[]>
+    readonly details: Record<string, string[]>,
   ) {
     super(message);
   }
@@ -43,8 +43,21 @@ export class DatabaseError extends DomainError {
 
   constructor(
     readonly message: string,
-    override readonly cause?: Error
+    override readonly cause?: Error,
   ) {
     super(message);
+  }
+}
+
+export class AIServiceError extends DomainError {
+  readonly code = "AI_SERVICE_ERROR";
+  override readonly message: string;
+
+  constructor(
+    message: string,
+    override readonly cause?: Error,
+  ) {
+    super(message);
+    this.message = message;
   }
 }

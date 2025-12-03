@@ -29,12 +29,12 @@ git checkout -b feature/<ticket-id>-<short-description>
 
 ### Branch Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Feature | `feature/<ticket-id>-<description>` | `feature/123-user-authentication` |
-| Bug fix | `fix/<ticket-id>-<description>` | `fix/456-login-validation` |
-| Documentation | `docs/<description>` | `docs/api-reference` |
-| Refactor | `refactor/<description>` | `refactor/user-repository` |
+| Type          | Pattern                             | Example                           |
+| ------------- | ----------------------------------- | --------------------------------- |
+| Feature       | `feature/<ticket-id>-<description>` | `feature/123-user-authentication` |
+| Bug fix       | `fix/<ticket-id>-<description>`     | `fix/456-login-validation`        |
+| Documentation | `docs/<description>`                | `docs/api-reference`              |
+| Refactor      | `refactor/<description>`            | `refactor/user-repository`        |
 
 ## Commit Messages
 
@@ -50,15 +50,15 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation changes |
-| `style` | Code style (formatting, semicolons) |
-| `refactor` | Code refactoring |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance tasks |
+| Type       | Description                         |
+| ---------- | ----------------------------------- |
+| `feat`     | New feature                         |
+| `fix`      | Bug fix                             |
+| `docs`     | Documentation changes               |
+| `style`    | Code style (formatting, semicolons) |
+| `refactor` | Code refactoring                    |
+| `test`     | Adding or updating tests            |
+| `chore`    | Maintenance tasks                   |
 
 ### Examples
 
@@ -139,9 +139,11 @@ fix(items): handle null description in item creation
 
 ### For Reviewers
 
-Use the [Code Review Checklist](../process/code-review-checklist.md) to ensure consistency.
+Use the [Code Review Checklist](../process/code-review-checklist.md) to ensure
+consistency.
 
 Review for:
+
 - Architecture compliance
 - Error handling patterns
 - Test coverage
@@ -163,6 +165,7 @@ We use **squash and merge**:
 - Keeps main branch history clean
 
 After merge:
+
 - Delete your feature branch
 - Pull latest main:
   ```bash

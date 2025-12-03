@@ -19,7 +19,7 @@ Deno.test("Result.ok - isOk returns true, isErr returns false for any value", ()
       assertEquals(result.isOk(), true);
       assertEquals(result.isErr(), false);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -30,7 +30,7 @@ Deno.test("Result.err - isErr returns true, isOk returns false for any error", (
       assertEquals(result.isErr(), true);
       assertEquals(result.isOk(), false);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -40,7 +40,7 @@ Deno.test("Result.ok - value property is accessible and contains the original va
       const result = Result.ok(value);
       assertEquals(result.value, value);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -50,7 +50,7 @@ Deno.test("Result.err - error property is accessible and contains the original e
       const result = Result.err(error);
       assertEquals(result.error, error);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -60,7 +60,7 @@ Deno.test("Result.ok - has correct _tag discriminant", () => {
       const result = Result.ok(value);
       assertEquals(result._tag, "Ok");
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -70,7 +70,7 @@ Deno.test("Result.err - has correct _tag discriminant", () => {
       const result = Result.err(error);
       assertEquals(result._tag, "Err");
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 

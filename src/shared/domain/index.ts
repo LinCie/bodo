@@ -9,10 +9,20 @@ export { BaseEntity } from "./entity.ts";
 export type { BaseEntityProps } from "./entity.ts";
 
 export {
+  DatabaseError,
   DomainError,
   NotFoundError,
   ValidationError,
-  DatabaseError,
 } from "./errors.ts";
 
 export type { BaseRepository } from "./repository.ts";
+
+// Cross-slice communication interfaces
+export type {
+  IInventoryService,
+  InventoryRecord,
+  ISpaceLookup,
+  ItemForPropagation,
+  PropagationResult,
+  SpaceInfo,
+} from "./interfaces/index.ts";

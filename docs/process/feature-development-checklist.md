@@ -1,6 +1,7 @@
 # Feature Development Checklist
 
-Step-by-step guide for building new features following vertical slice architecture.
+Step-by-step guide for building new features following vertical slice
+architecture.
 
 ## Phase 1: Planning
 
@@ -10,8 +11,10 @@ Step-by-step guide for building new features following vertical slice architectu
 - [ ] Review existing shared code for reuse
 
 **Example:** For an "items" feature:
+
 - Entity: `Item` with name, description, owner
-- Endpoints: `GET /items`, `POST /items`, `GET /items/:id`, `PUT /items/:id`, `DELETE /items/:id`
+- Endpoints: `GET /items`, `POST /items`, `GET /items/:id`, `PUT /items/:id`,
+  `DELETE /items/:id`
 
 ---
 
@@ -27,6 +30,7 @@ Create `src/features/{feature}/domain/` folder.
 - [ ] Add domain methods for business logic
 
 **DO:**
+
 ```typescript
 // src/features/items/domain/item.entity.ts
 import { BaseEntity, BaseEntityProps } from "#/shared/domain/entity.ts";
@@ -57,12 +61,13 @@ export class Item extends BaseEntity {
 ```
 
 **DON'T:**
+
 ```typescript
 // ❌ Don't include infrastructure concerns
 class Item extends BaseEntity {
-  dbConnection: Database;  // Wrong!
-  
-  async save() {           // Wrong! This belongs in repository
+  dbConnection: Database; // Wrong!
+
+  async save() { // Wrong! This belongs in repository
     await this.dbConnection.insert(this);
   }
 }
@@ -74,6 +79,7 @@ class Item extends BaseEntity {
 - [ ] Make immutable
 
 **DO:**
+
 ```typescript
 // src/features/items/domain/item-name.value-object.ts
 export class ItemName {
@@ -81,9 +87,11 @@ export class ItemName {
 
   static create(value: string): Result<ItemName, ValidationError> {
     if (value.length < 1 || value.length > 100) {
-      return Result.err(new ValidationError("Invalid item name", {
-        name: ["Must be between 1 and 100 characters"]
-      }));
+      return Result.err(
+        new ValidationError("Invalid item name", {
+          name: ["Must be between 1 and 100 characters"],
+        }),
+      );
     }
     return Result.ok(new ItemName(value));
   }
@@ -97,7 +105,7 @@ export class ItemName {
 
 ```typescript
 // src/features/items/domain/item.errors.ts
-import { NotFoundError, DomainError } from "#/shared/domain/errors.ts";
+import { DomainError, NotFoundError } from "#/shared/domain/errors.ts";
 
 export class ItemNotFoundError extends NotFoundError {
   constructor(id: string) {
@@ -139,12 +147,16 @@ Create `src/features/{feature}/infrastructure/` folder.
 - [ ] Return `Result` types
 
 **DO:**
+
 ```typescript
 // src/features/items/infrastructure/item.repository.ts
 import { BaseRepository } from "#/shared/domain/repository.ts";
 import { Result } from "#/shared/domain/result.ts";
 import { DatabaseError, DomainError } from "#/shared/domain/errors.ts";
-import { mapRowToEntity, mapEntityToRow } from "#/shared/infrastructure/mappers/index.ts";
+import {
+  mapEntityToRow,
+  mapRowToEntity,
+} from "#/shared/infrastructure/mappers/index.ts";
 import { Item } from "../domain/item.entity.ts";
 
 interface CreateItemDTO {
@@ -158,7 +170,8 @@ interface UpdateItemDTO {
   description?: string | null;
 }
 
-export class ItemRepository implements BaseRepository<Item, CreateItemDTO, UpdateItemDTO> {
+export class ItemRepository
+  implements BaseRepository<Item, CreateItemDTO, UpdateItemDTO> {
   constructor(private db: Database) {}
 
   async findById(id: string): Promise<Result<Item | null, DomainError>> {
@@ -167,9 +180,9 @@ export class ItemRepository implements BaseRepository<Item, CreateItemDTO, Updat
         .selectFrom("items")
         .selectAll()
         .where("id", "=", id)
-        .where("deleted_at", "is", null)  // Filter soft-deleted
+        .where("deleted_at", "is", null) // Filter soft-deleted
         .executeTakeFirst();
-      
+
       return Result.ok(row ? mapRowToEntity<Item>(row) : null);
     } catch (error) {
       return Result.err(new DatabaseError("Failed to find item", error));
@@ -181,10 +194,10 @@ export class ItemRepository implements BaseRepository<Item, CreateItemDTO, Updat
       const rows = await this.db
         .selectFrom("items")
         .selectAll()
-        .where("deleted_at", "is", null)  // Filter soft-deleted
+        .where("deleted_at", "is", null) // Filter soft-deleted
         .execute();
-      
-      return Result.ok(rows.map(row => mapRowToEntity<Item>(row)));
+
+      return Result.ok(rows.map((row) => mapRowToEntity<Item>(row)));
     } catch (error) {
       return Result.err(new DatabaseError("Failed to find items", error));
     }
@@ -194,7 +207,7 @@ export class ItemRepository implements BaseRepository<Item, CreateItemDTO, Updat
     try {
       const now = new Date();
       const id = crypto.randomUUID();
-      
+
       const row = {
         id,
         ...mapEntityToRow(data),
@@ -204,14 +217,17 @@ export class ItemRepository implements BaseRepository<Item, CreateItemDTO, Updat
       };
 
       await this.db.insertInto("items").values(row).execute();
-      
+
       return Result.ok(mapRowToEntity<Item>(row));
     } catch (error) {
       return Result.err(new DatabaseError("Failed to create item", error));
     }
   }
 
-  async update(id: string, data: UpdateItemDTO): Promise<Result<Item, DomainError>> {
+  async update(
+    id: string,
+    data: UpdateItemDTO,
+  ): Promise<Result<Item, DomainError>> {
     try {
       const updateData = {
         ...mapEntityToRow(data),
@@ -239,7 +255,7 @@ export class ItemRepository implements BaseRepository<Item, CreateItemDTO, Updat
         .set({ deleted_at: new Date() })
         .where("id", "=", id)
         .execute();
-      
+
       return Result.ok(true);
     } catch (error) {
       return Result.err(new DatabaseError("Failed to delete item", error));
@@ -249,6 +265,7 @@ export class ItemRepository implements BaseRepository<Item, CreateItemDTO, Updat
 ```
 
 **DON'T:**
+
 ```typescript
 // ❌ Don't physically delete
 async delete(id: string): Promise<Result<boolean, DomainError>> {
@@ -330,6 +347,7 @@ export const updateItemSchema = z.object({
 - [ ] Use early returns on errors
 
 **DO:**
+
 ```typescript
 // src/features/items/application/create-item.use-case.ts
 import { Result } from "#/shared/domain/result.ts";
@@ -343,7 +361,9 @@ import { CreateItemInput, ItemResponse } from "./item.dto.ts";
 export class CreateItemUseCase {
   constructor(private itemRepository: ItemRepository) {}
 
-  async execute(input: unknown): Promise<Result<ItemResponse, ValidationError | DomainError>> {
+  async execute(
+    input: unknown,
+  ): Promise<Result<ItemResponse, ValidationError | DomainError>> {
     // 1. Validate input
     const validationResult = validate(createItemSchema, input);
     if (validationResult.isErr()) {
@@ -376,6 +396,7 @@ export class CreateItemUseCase {
 ```
 
 **DON'T:**
+
 ```typescript
 // ❌ Don't throw exceptions
 async execute(input: CreateItemInput): Promise<ItemResponse> {
@@ -407,16 +428,21 @@ Create `src/features/{feature}/presentation/` folder.
 - [ ] Map domain errors to status codes
 
 **DO:**
+
 ```typescript
 // src/features/items/presentation/item.routes.ts
 import { Hono } from "hono";
-import { NotFoundError, ValidationError, DatabaseError } from "#/shared/domain/errors.ts";
+import {
+  DatabaseError,
+  NotFoundError,
+  ValidationError,
+} from "#/shared/domain/errors.ts";
 import { CreateItemUseCase } from "../application/create-item.use-case.ts";
 import { GetItemUseCase } from "../application/get-item.use-case.ts";
 
 export function createItemRoutes(
   createItemUseCase: CreateItemUseCase,
-  getItemUseCase: GetItemUseCase
+  getItemUseCase: GetItemUseCase,
 ) {
   const app = new Hono();
 
@@ -467,6 +493,7 @@ function mapErrorToResponse(c: Context, error: DomainError) {
 ```
 
 **DON'T:**
+
 ```typescript
 // ❌ Don't expose internal error details
 if (error instanceof DatabaseError) {
@@ -519,7 +546,7 @@ Deno.test("Item creation preserves all input data", () => {
         item.description === props.description &&
         item.ownerId === props.ownerId
       );
-    })
+    }),
   );
 });
 
@@ -536,10 +563,10 @@ Deno.test("Item.belongsTo correctly identifies owner", () => {
         updatedAt: new Date(),
         deletedAt: null,
       });
-      
-      return item.belongsTo(ownerId) === true && 
-             (ownerId === otherId || item.belongsTo(otherId) === false);
-    })
+
+      return item.belongsTo(ownerId) === true &&
+        (ownerId === otherId || item.belongsTo(otherId) === false);
+    }),
   );
 });
 ```
@@ -554,7 +581,7 @@ import { ValidationError } from "#/shared/domain/errors.ts";
 
 Deno.test("CreateItemUseCase returns ValidationError for empty name", async () => {
   const useCase = new CreateItemUseCase(mockRepository);
-  
+
   const result = await useCase.execute({
     name: "",
     ownerId: "123e4567-e89b-12d3-a456-426614174000",
@@ -621,7 +648,8 @@ curl http://localhost:8000/items/{id}
 
 ## Final Checklist
 
-- [ ] All layers created (`domain/`, `application/`, `infrastructure/`, `presentation/`)
+- [ ] All layers created (`domain/`, `application/`, `infrastructure/`,
+      `presentation/`)
 - [ ] Entity extends `BaseEntity`
 - [ ] Repository implements `BaseRepository`
 - [ ] All operations return `Result` types

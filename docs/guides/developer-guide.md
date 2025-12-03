@@ -7,16 +7,19 @@ Environment setup and daily development workflow.
 ### Install Deno
 
 **macOS/Linux:**
+
 ```bash
 curl -fsSL https://deno.land/install.sh | sh
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 irm https://deno.land/install.ps1 | iex
 ```
 
 **Verify installation:**
+
 ```bash
 deno --version
 ```
@@ -24,10 +27,14 @@ deno --version
 ### IDE Setup
 
 **VS Code** (Recommended):
-1. Install the [Deno extension](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno)
-2. Enable Deno for the workspace (Cmd/Ctrl+Shift+P → "Deno: Initialize Workspace Configuration")
 
-The project includes VS Code settings in `.vscode/` for consistent configuration.
+1. Install the
+   [Deno extension](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno)
+2. Enable Deno for the workspace (Cmd/Ctrl+Shift+P → "Deno: Initialize Workspace
+   Configuration")
+
+The project includes VS Code settings in `.vscode/` for consistent
+configuration.
 
 ## Repository Setup
 
@@ -49,6 +56,7 @@ deno task dev
 ```
 
 This starts the server with:
+
 - File watching (auto-restart on changes)
 - Pretty-printed logs via pino-pretty
 - Required permissions (`--allow-net`, `--allow-env`, `--allow-sys`)
@@ -118,22 +126,23 @@ deno coverage coverage
 
 ## Key Files
 
-| File | Purpose |
-|------|---------|
-| `deno.json` | Tasks, import map, compiler options |
-| `src/server.ts` | Hono app setup, middleware, routes |
-| `src/shared/domain/entity.ts` | BaseEntity class |
-| `src/shared/domain/result.ts` | Result type for error handling |
-| `src/shared/domain/errors.ts` | Domain error classes |
-| `src/shared/domain/repository.ts` | BaseRepository interface |
-| `src/shared/application/validation.ts` | Zod validation helper |
-| `src/shared/infrastructure/mappers/` | Case conversion utilities |
+| File                                   | Purpose                             |
+| -------------------------------------- | ----------------------------------- |
+| `deno.json`                            | Tasks, import map, compiler options |
+| `src/server.ts`                        | Hono app setup, middleware, routes  |
+| `src/shared/domain/entity.ts`          | BaseEntity class                    |
+| `src/shared/domain/result.ts`          | Result type for error handling      |
+| `src/shared/domain/errors.ts`          | Domain error classes                |
+| `src/shared/domain/repository.ts`      | BaseRepository interface            |
+| `src/shared/application/validation.ts` | Zod validation helper               |
+| `src/shared/infrastructure/mappers/`   | Case conversion utilities           |
 
 ## Common Tasks
 
 ### Adding a New Feature
 
-See [Feature Development Checklist](../process/feature-development-checklist.md) for step-by-step guide.
+See [Feature Development Checklist](../process/feature-development-checklist.md)
+for step-by-step guide.
 
 ### Import Aliases
 
@@ -158,17 +167,18 @@ Then open `chrome://inspect` in Chrome.
 
 Configure via environment variables or `.env` file:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | HTTP server port | 8000 |
-| `DATABASE_URL` | Database connection string | - |
-| `LOG_LEVEL` | Logging level | info |
+| Variable       | Description                | Default |
+| -------------- | -------------------------- | ------- |
+| `PORT`         | HTTP server port           | 8000    |
+| `DATABASE_URL` | Database connection string | -       |
+| `LOG_LEVEL`    | Logging level              | info    |
 
 ## Troubleshooting
 
 ### Permission Errors
 
 Ensure you're running with required permissions:
+
 ```bash
 deno run --allow-net --allow-env --allow-sys src/server.ts
 ```
@@ -176,10 +186,12 @@ deno run --allow-net --allow-env --allow-sys src/server.ts
 ### Import Errors
 
 Clear the Deno cache:
+
 ```bash
 deno cache --reload src/server.ts
 ```
 
 ### Type Errors
 
-Ensure the Deno extension is enabled in VS Code and restart the TypeScript server.
+Ensure the Deno extension is enabled in VS Code and restart the TypeScript
+server.

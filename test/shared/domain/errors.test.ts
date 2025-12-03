@@ -1,10 +1,10 @@
 import { assertEquals, assertInstanceOf } from "@std/assert";
 import * as fc from "fast-check";
 import {
+  DatabaseError,
   DomainError,
   NotFoundError,
   ValidationError,
-  DatabaseError,
 } from "#/shared/domain/errors.ts";
 
 /**
@@ -20,12 +20,12 @@ import {
 const nonEmptyString = fc.string({ minLength: 1 });
 const validationDetails = fc.dictionary(
   nonEmptyString,
-  fc.array(fc.string(), { minLength: 1 })
+  fc.array(fc.string(), { minLength: 1 }),
 );
 
 Deno.test("NotFoundError - has non-empty code and message string properties", () => {
   fc.assert(
-    fc.property(nonEmptyString, nonEmptyString, (resource, id) => {
+    fc.property(nonEmptyString, fc.integer({ min: 1 }), (resource, id) => {
       const error = new NotFoundError(resource, id);
 
       assertEquals(typeof error.code, "string");
@@ -33,7 +33,7 @@ Deno.test("NotFoundError - has non-empty code and message string properties", ()
       assertEquals(typeof error.message, "string");
       assertEquals(error.message.length > 0, true);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -47,7 +47,7 @@ Deno.test("ValidationError - has non-empty code and message string properties", 
       assertEquals(typeof error.message, "string");
       assertEquals(error.message.length > 0, true);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
@@ -61,13 +61,13 @@ Deno.test("DatabaseError - has non-empty code and message string properties", ()
       assertEquals(typeof error.message, "string");
       assertEquals(error.message.length > 0, true);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
 Deno.test("All domain errors extend DomainError", () => {
   fc.assert(
-    fc.property(nonEmptyString, nonEmptyString, (resource, id) => {
+    fc.property(nonEmptyString, fc.integer({ min: 1 }), (resource, id) => {
       const notFoundError = new NotFoundError(resource, id);
       const validationError = new ValidationError("validation failed", {});
       const databaseError = new DatabaseError("db error");
@@ -76,13 +76,13 @@ Deno.test("All domain errors extend DomainError", () => {
       assertInstanceOf(validationError, DomainError);
       assertInstanceOf(databaseError, DomainError);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
 Deno.test("All domain errors extend Error", () => {
   fc.assert(
-    fc.property(nonEmptyString, nonEmptyString, (resource, id) => {
+    fc.property(nonEmptyString, fc.integer({ min: 1 }), (resource, id) => {
       const notFoundError = new NotFoundError(resource, id);
       const validationError = new ValidationError("validation failed", {});
       const databaseError = new DatabaseError("db error");
@@ -91,25 +91,25 @@ Deno.test("All domain errors extend Error", () => {
       assertInstanceOf(validationError, Error);
       assertInstanceOf(databaseError, Error);
     }),
-    { numRuns: 100 }
+    { numRuns: 100 },
   );
 });
 
 // Unit tests for specific error types
 
 Deno.test("NotFoundError - has correct code", () => {
-  const error = new NotFoundError("User", "123");
+  const error = new NotFoundError("User", 123);
   assertEquals(error.code, "NOT_FOUND");
 });
 
 Deno.test("NotFoundError - stores resource and id", () => {
-  const error = new NotFoundError("User", "123");
+  const error = new NotFoundError("User", 123);
   assertEquals(error.resource, "User");
-  assertEquals(error.id, "123");
+  assertEquals(error.id, 123);
 });
 
 Deno.test("NotFoundError - generates descriptive message", () => {
-  const error = new NotFoundError("User", "123");
+  const error = new NotFoundError("User", 123);
   assertEquals(error.message, "User with id '123' not found");
 });
 

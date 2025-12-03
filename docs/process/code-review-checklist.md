@@ -4,7 +4,8 @@ Use this checklist to ensure consistent quality during code reviews.
 
 ## Architecture Compliance
 
-- [ ] Follows vertical slice structure (`domain/`, `application/`, `infrastructure/`, `presentation/`)
+- [ ] Follows vertical slice structure (`domain/`, `application/`,
+      `infrastructure/`, `presentation/`)
 - [ ] Respects layer boundaries (no forbidden imports)
 - [ ] Domain layer has no infrastructure dependencies
 - [ ] Uses shared base classes correctly (`BaseEntity`, `BaseRepository`)
@@ -41,7 +42,8 @@ Use this checklist to ensure consistent quality during code reviews.
 
 - [ ] Unit tests cover edge cases and error conditions
 - [ ] Property-based tests for correctness properties (where applicable)
-- [ ] Test annotations follow format: `**Feature: {name}, Property {n}: {text}**`
+- [ ] Test annotations follow format:
+      `**Feature: {name}, Property {n}: {text}**`
 - [ ] Tests don't mock domain logic
 - [ ] All tests pass (`deno task test`)
 
@@ -81,20 +83,25 @@ Use this checklist to ensure consistent quality during code reviews.
 
 ```markdown
 ## Summary
+
 [Brief description of what was reviewed]
 
 ## Findings
 
 ### Must Fix
+
 - [ ] [Critical issue that blocks merge]
 
 ### Should Fix
+
 - [ ] [Important issue that should be addressed]
 
 ### Consider
+
 - [ ] [Suggestion for improvement]
 
 ## Approval
+
 - [ ] Approved
 - [ ] Approved with comments
 - [ ] Changes requested

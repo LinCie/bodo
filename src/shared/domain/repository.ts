@@ -24,7 +24,7 @@ export interface BaseRepository<
    * @param id - The entity's unique identifier
    * @returns Result containing the entity if found, null if not found, or an error
    */
-  findById(id: string): Promise<Result<T | null, DomainError>>;
+  findById(id: number): Promise<Result<T | null, DomainError>>;
 
   /**
    * Find all non-deleted entities.
@@ -45,12 +45,12 @@ export interface BaseRepository<
    * @param data - The partial data for updating the entity
    * @returns Result containing the updated entity or an error
    */
-  update(id: string, data: UpdateDTO): Promise<Result<T, DomainError>>;
+  update(id: number, data: UpdateDTO): Promise<Result<T, DomainError>>;
 
   /**
    * Soft delete an entity by setting the deletedAt timestamp.
    * @param id - The entity's unique identifier
    * @returns Result containing true if deleted successfully, or an error
    */
-  delete(id: string): Promise<Result<boolean, DomainError>>;
+  delete(id: number): Promise<Result<boolean, DomainError>>;
 }

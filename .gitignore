@@ -7,3 +7,6 @@
 *.orig
 *.pyc
 *.swp
+
+bodo-ts
+bodo-php

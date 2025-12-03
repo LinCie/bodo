@@ -4,7 +4,8 @@ Core design principles guiding all development decisions in this project.
 
 ## 1. Dependency Rule
 
-Dependencies must point inward toward the domain layer. The domain layer has no dependencies on outer layers.
+Dependencies must point inward toward the domain layer. The domain layer has no
+dependencies on outer layers.
 
 ```mermaid
 graph LR
@@ -14,6 +15,7 @@ graph LR
 ```
 
 **DO:**
+
 ```typescript
 // Application layer imports from domain
 import { Result } from "#/shared/domain/result.ts";
@@ -21,6 +23,7 @@ import { User } from "#/features/auth/domain/user.entity.ts";
 ```
 
 **DON'T:**
+
 ```typescript
 // Domain layer should NOT import from infrastructure
 import { db } from "#/shared/infrastructure/database.ts"; // ❌ Wrong!
@@ -28,9 +31,11 @@ import { db } from "#/shared/infrastructure/database.ts"; // ❌ Wrong!
 
 ## 2. Result Type Pattern
 
-Use the `Result<T, E>` type for all operations that can fail. Never throw exceptions for business logic errors.
+Use the `Result<T, E>` type for all operations that can fail. Never throw
+exceptions for business logic errors.
 
 **DO:**
+
 ```typescript
 function findUser(id: string): Promise<Result<User | null, DomainError>> {
   const user = await repository.findById(id);
@@ -49,6 +54,7 @@ const user = result.value; // Safe to access
 ```
 
 **DON'T:**
+
 ```typescript
 function findUser(id: string): Promise<User> {
   const user = await repository.findById(id);
@@ -64,6 +70,7 @@ function findUser(id: string): Promise<User> {
 Records are never physically deleted. Instead, set the `deletedAt` timestamp.
 
 **DO:**
+
 ```typescript
 async delete(id: string): Promise<Result<boolean, DomainError>> {
   await db
@@ -85,6 +92,7 @@ async findAll(): Promise<Result<User[], DomainError>> {
 ```
 
 **DON'T:**
+
 ```typescript
 async delete(id: string): Promise<void> {
   await db.deleteFrom("users").where("id", "=", id).execute(); // ❌ Physical deletion
@@ -93,18 +101,23 @@ async delete(id: string): Promise<void> {
 
 ## 4. Case Mapping Convention
 
-Database columns use `snake_case`, TypeScript code uses `camelCase`. Use case mappers for conversion.
+Database columns use `snake_case`, TypeScript code uses `camelCase`. Use case
+mappers for conversion.
 
-| Context | Convention | Example |
-|---------|------------|---------|
-| Database columns | snake_case | `created_at`, `user_id` |
-| TypeScript properties | camelCase | `createdAt`, `userId` |
-| File names | kebab-case | `user-repository.ts` |
-| Classes/Interfaces | PascalCase | `UserEntity`, `CreateUserDTO` |
+| Context               | Convention | Example                       |
+| --------------------- | ---------- | ----------------------------- |
+| Database columns      | snake_case | `created_at`, `user_id`       |
+| TypeScript properties | camelCase  | `createdAt`, `userId`         |
+| File names            | kebab-case | `user-repository.ts`          |
+| Classes/Interfaces    | PascalCase | `UserEntity`, `CreateUserDTO` |
 
 **DO:**
+
 ```typescript
-import { mapRowToEntity, mapEntityToRow } from "#/shared/infrastructure/mappers/index.ts";
+import {
+  mapEntityToRow,
+  mapRowToEntity,
+} from "#/shared/infrastructure/mappers/index.ts";
 
 // Database → Entity
 const user = mapRowToEntity<User>(row); // { created_at: ... } → { createdAt: ... }
@@ -115,14 +128,16 @@ const row = mapEntityToRow(user); // { createdAt: ... } → { created_at: ... }
 
 ## 5. Immutability
 
-Prefer immutable data structures. Use `readonly` for properties that shouldn't change after construction.
+Prefer immutable data structures. Use `readonly` for properties that shouldn't
+change after construction.
 
 **DO:**
+
 ```typescript
 class User extends BaseEntity {
   readonly email: string;
   readonly name: string;
-  
+
   constructor(props: UserProps) {
     super(props);
     this.email = props.email;
@@ -133,7 +148,8 @@ class User extends BaseEntity {
 
 ## 6. Single Responsibility
 
-Each module should have one reason to change. Separate concerns into distinct files and classes.
+Each module should have one reason to change. Separate concerns into distinct
+files and classes.
 
 - Entities contain business logic only
 - Repositories handle data access only

@@ -50,7 +50,9 @@ export function mapRowToEntity<T>(row: Record<string, unknown>): T {
 export function mapEntityToRow<T>(entity: T): Record<string, unknown> {
   const result: Record<string, unknown> = {};
 
-  for (const [key, value] of Object.entries(entity as Record<string, unknown>)) {
+  for (
+    const [key, value] of Object.entries(entity as Record<string, unknown>)
+  ) {
     result[camelToSnake(key)] = value;
   }
 

@@ -11,69 +11,75 @@ import { validate } from "#/shared/application/validation.ts";
 import { ValidationError } from "#/shared/domain/errors.ts";
 
 Deno.test("validate - Property 5: Validation returns correct Result type", async (t) => {
-  await t.step("returns Ok with parsed data when input is valid (property-based)", () => {
-    // Test with string schema
-    const stringSchema = z.string();
-    fc.assert(
-      fc.property(fc.string(), (input) => {
-        const result = validate(stringSchema, input);
-        return result.isOk() && result.value === input;
-      }),
-      { numRuns: 100 }
-    );
+  await t.step(
+    "returns Ok with parsed data when input is valid (property-based)",
+    () => {
+      // Test with string schema
+      const stringSchema = z.string();
+      fc.assert(
+        fc.property(fc.string(), (input) => {
+          const result = validate(stringSchema, input);
+          return result.isOk() && result.value === input;
+        }),
+        { numRuns: 100 },
+      );
 
-    // Test with number schema
-    const numberSchema = z.number();
-    fc.assert(
-      fc.property(fc.double({ noNaN: true }), (input) => {
-        const result = validate(numberSchema, input);
-        return result.isOk() && result.value === input;
-      }),
-      { numRuns: 100 }
-    );
+      // Test with number schema
+      const numberSchema = z.number();
+      fc.assert(
+        fc.property(fc.double({ noNaN: true }), (input) => {
+          const result = validate(numberSchema, input);
+          return result.isOk() && result.value === input;
+        }),
+        { numRuns: 100 },
+      );
 
-    // Test with object schema
-    const objectSchema = z.object({
-      name: z.string(),
-      age: z.number(),
-    });
-    fc.assert(
-      fc.property(
-        fc.record({ name: fc.string(), age: fc.integer() }),
-        (input) => {
-          const result = validate(objectSchema, input);
-          return (
-            result.isOk() &&
-            result.value.name === input.name &&
-            result.value.age === input.age
-          );
-        }
-      ),
-      { numRuns: 100 }
-    );
-  });
+      // Test with object schema
+      const objectSchema = z.object({
+        name: z.string(),
+        age: z.number(),
+      });
+      fc.assert(
+        fc.property(
+          fc.record({ name: fc.string(), age: fc.integer() }),
+          (input) => {
+            const result = validate(objectSchema, input);
+            return (
+              result.isOk() &&
+              result.value.name === input.name &&
+              result.value.age === input.age
+            );
+          },
+        ),
+        { numRuns: 100 },
+      );
+    },
+  );
 
-  await t.step("returns Err with ValidationError when input is invalid (property-based)", () => {
-    const stringSchema = z.string();
+  await t.step(
+    "returns Err with ValidationError when input is invalid (property-based)",
+    () => {
+      const stringSchema = z.string();
 
-    // Numbers should fail string validation
-    fc.assert(
-      fc.property(fc.double({ noNaN: true }), (input) => {
-        const result = validate(stringSchema, input);
-        return result.isErr() && result.error instanceof ValidationError;
-      }),
-      { numRuns: 100 }
-    );
+      // Numbers should fail string validation
+      fc.assert(
+        fc.property(fc.double({ noNaN: true }), (input) => {
+          const result = validate(stringSchema, input);
+          return result.isErr() && result.error instanceof ValidationError;
+        }),
+        { numRuns: 100 },
+      );
 
-    // Objects should fail string validation
-    fc.assert(
-      fc.property(fc.object(), (input) => {
-        const result = validate(stringSchema, input);
-        return result.isErr() && result.error instanceof ValidationError;
-      }),
-      { numRuns: 100 }
-    );
-  });
+      // Objects should fail string validation
+      fc.assert(
+        fc.property(fc.object(), (input) => {
+          const result = validate(stringSchema, input);
+          return result.isErr() && result.error instanceof ValidationError;
+        }),
+        { numRuns: 100 },
+      );
+    },
+  );
 
   await t.step("ValidationError contains details with field paths", () => {
     const schema = z.object({

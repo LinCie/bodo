@@ -150,23 +150,27 @@ git revert -m 1 <merge-commit-hash>
 ## [1.2.0] - 2024-01-15
 
 ### Added
+
 - New user authentication feature (#123)
 - Password reset functionality (#124)
 
 ### Changed
+
 - Improved error messages for validation (#125)
 
 ### Fixed
+
 - Fixed null pointer in item creation (#126)
 
 ### Breaking Changes
+
 - Removed deprecated `/api/v1/users` endpoint
 ```
 
 ## Version History
 
-| Version | Date | Notes |
-|---------|------|-------|
-| 1.2.0 | 2024-01-15 | Added auth features |
-| 1.1.0 | 2024-01-01 | Added items feature |
-| 1.0.0 | 2023-12-15 | Initial release |
+| Version | Date       | Notes               |
+| ------- | ---------- | ------------------- |
+| 1.2.0   | 2024-01-15 | Added auth features |
+| 1.1.0   | 2024-01-01 | Added items feature |
+| 1.0.0   | 2023-12-15 | Initial release     |
