@@ -1,0 +1,9 @@
+/.idea/
+/.kiro/
+
+/node_modules
+
+.env
+*.orig
+*.pyc
+*.swp
