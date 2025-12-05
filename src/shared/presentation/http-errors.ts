@@ -14,6 +14,11 @@ import type { DomainError, ValidationError } from "#/shared/domain/errors.ts";
 export function errorToStatus(error: DomainError): ContentfulStatusCode {
   if (error.code === "VALIDATION_ERROR") return 400;
   if (error.code === "NOT_FOUND") return 404;
+  if (error.code === "INVALID_CREDENTIALS") return 401;
+  if (error.code === "TOKEN_EXPIRED") return 401;
+  if (error.code === "INVALID_TOKEN") return 401;
+  if (error.code === "AUTHENTICATION_ERROR") return 401;
+  if (error.code === "EMAIL_ALREADY_EXISTS") return 409;
   if (error.code === "DATABASE_ERROR") return 500;
   if (error.code === "AI_SERVICE_ERROR") return 500;
   return 500;
